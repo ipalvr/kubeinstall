@@ -9,7 +9,7 @@ echo ""
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Updating Server${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo apt update && sudo apt upgrade
+sudo apt update && sudo apt upgrade -y
 sleep 1s
 #echo "------------------------------------------------------------------------------------------------------------------------------------"
 #echo "${green}Disabling SELinux enforcement${reset}"
@@ -71,7 +71,7 @@ echo "--------------------------------------------------------------------------
 echo "${green}Set up the Docker repository${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 sudo apt-get update
-sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
+sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 #echo "${green}Installing container.io which is not yet provided by the package manager before installing docker${reset}"
@@ -92,7 +92,7 @@ echo "--------------------------------------------------------------------------
 echo "${green}Install Docker Engine${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 sleep 1s
 echo "${green}Run Docker as a non-root user${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
@@ -158,6 +158,6 @@ echo "--------------------------------------------------------------------------
 #echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Starting Kubelet service${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-systemctl enable kubelet
-systemctl start kubelet
-systemctl status kubelet
+sudo systemctl enable kubelet
+sudo systemctl start kubelet
+sudo systemctl status kubelet
