@@ -9,85 +9,105 @@ echo ""
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Updating Server${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-dnf -y upgrade
+sudo apt update && sudo apt upgrade
 sleep 1s
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Disabling SELinux enforcement${reset}"
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-setenforce 0
-sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
-sleep 1s
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Enabling transparent masquerading and facilitate Virtual Extensible LAN (VxLAN) traffic for communication between Kubernetes pods across the cluster${reset}"
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-modprobe br_netfilter
-sleep 1s
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Enabling IP masquerade at the firewall${reset}"
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-firewall-cmd --add-masquerade --permanent
-sleep 1s
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Disabling and Reloading firewall. DO NOT DISABLE FIREWALL IN PPRODUCTION${reset}"
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-systemctl disable firewalld
-firewall-cmd --reload
-systemctl stop firewalld
-sleep 1s
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#echo "${green}Disabling SELinux enforcement${reset}"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#setenforce 0
+#sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+#sleep 1s
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#echo "${green}Enabling transparent masquerading and facilitate Virtual Extensible LAN (VxLAN) traffic for communication between Kubernetes pods across the cluster${reset}"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#modprobe br_netfilter
+#sleep 1s
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#echo "${green}Enabling IP masquerade at the firewall${reset}"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#firewall-cmd --add-masquerade --permanent
+#sleep 1s
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#echo "${green}Disabling and Reloading firewall. DO NOT DISABLE FIREWALL IN PPRODUCTION${reset}"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#systemctl disable firewalld
+#firewall-cmd --reload
+#systemctl stop firewalld
+#sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Set bridged packets to traverse iptables rules${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-cat <<EOF > /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-EOF
+echo “net.bridge.bridge-nf-call-iptables=1” | sudo tee -a /etc/sysctl.conf
+#cat <<EOF > /etc/sysctl.d/k8s.conf
+#net.bridge.bridge-nf-call-ip6tables = 1
+#net.bridge.bridge-nf-call-iptables = 1
+#EOF
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Loading the new rules${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sysctl --system
+sudo sysctl -p
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}New rules are loaded${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Disabling all memory swaps to increase performance${reset}"
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-swapoff -a
-sed -i 's|/dev/mapper/cs-swap|#/dev/mapper/cs-swap|g' /etc/fstab
-sleep 1s
-echo "------------------------------------------------------------------------------------------------------------------------------------"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#echo "${green}Disabling all memory swaps to increase performance${reset}"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#swapoff -a
+#sed -i 's|/dev/mapper/cs-swap|#/dev/mapper/cs-swap|g' /etc/fstab
+#sleep 1s
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Installing Docker${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 sleep 1s
 echo ""
 echo ""
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Adding the repository for the docker installation package${reset}"
+echo "${green}Unistall old versions of Docker${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo -y
+sudo apt-get remove docker docker-engine docker.io containerd runc
+echo "------------------------------------------------------------------------------------------------------------------------------------"
+echo "${green}Set up the Docker repository${reset}"
+echo "------------------------------------------------------------------------------------------------------------------------------------"
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Installing container.io which is not yet provided by the package manager before installing docker${reset}"
+#echo "${green}Installing container.io which is not yet provided by the package manager before installing docker${reset}"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm -y
+#sleep 1s
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+echo "${green}Add Docker’s official GPG key${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm -y
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "------------------------------------------------------------------------------------------------------------------------------------"
+echo "${green}Set up the Docker stable repository${reset}"
+echo "------------------------------------------------------------------------------------------------------------------------------------"
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo "------------------------------------------------------------------------------------------------------------------------------------"
+echo "${green}Install Docker Engine${reset}"
+echo "------------------------------------------------------------------------------------------------------------------------------------"
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
 sleep 1s
+echo "${green}Run Docker as a non-root user${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Installing Docker from repositories${reset}"
+sudo usermod -aG docker $USER
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-dnf install docker-ce --nobest -y
-sleep 1s
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Starting Docker service${reset}"
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-systemctl start docker
-sleep 1s
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Making Docker service to start after reboot${reset}"
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-systemctl enable docker
-sleep 1s
-echo "------------------------------------------------------------------------------------------------------------------------------------"
+#echo "${green}Starting Docker service${reset}"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#systemctl start docker
+#sleep 1s
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#echo "${green}Making Docker service to start after reboot${reset}"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#systemctl enable docker
+#sleep 1s
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Checiking Docker version${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 if docker version | grep -q 'Version'; then
@@ -108,30 +128,34 @@ sleep 1s
 echo ""
 echo ""
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Adding the Kubernetes repository to your package manager by creating the following file${reset}"
+echo "${green}Update the apt package index and install packages needed to use the Kubernetes${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-cat <<EOF > /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-exclude=kubelet kubeadm kubectl
-EOF
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Updating repository information${reset}"
+echo "${green}Download the Google Cloud public signing key${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-dnf upgrade -y --nobest 
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Installing necessary compinents for Kubernetes${reset}"
+echo "${green}Add Kubernetes to the apt repository${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
+echo "${green}Update apt package index, install kubelet, kubeadm and kubectl, and pin their version${reset}"
+echo "------------------------------------------------------------------------------------------------------------------------------------"
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+sleep 1s
+echo "------------------------------------------------------------------------------------------------------------------------------------"
+#echo "${green}Installing necessary compinents for Kubernetes${reset}"
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
+#dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+#sleep 1s
+#echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Starting Kubelet service${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 systemctl enable kubelet

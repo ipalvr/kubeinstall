@@ -11,11 +11,11 @@ Follow these steps to deploy Kubernetes:
 1. Install Centos 8 on your Virtual Environment: i.e. VMWare Fusion
 2. Login as root to your Master Node and Worker Nodes and deploy git by using:
 
-	**yum install git**
+	**sudo apt install git**
 
 3. Get this repository by using:
 
-	**git clone https://github.com/porec/kubeinstall**
+	**git clone https://github.com/ipalvr/kubeinstall**
 
 4. Change directory
 
