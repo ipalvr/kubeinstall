@@ -11,7 +11,7 @@ sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Initiating Maste with subnet for CNIs 192.168.50.0/24. Can be customized by editing file${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-kubeadm init --pod-network-cidr 192.168.50.0/24
+kubeadm init --pod-network-cidr 10.244.0.0/16
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${red}Remember to copy tokens for adding Worker Nodes${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
@@ -23,10 +23,9 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Deploying Calico CNI{reset}"
+echo "${green}Deploying Weave CNI{reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
-kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Enable pods to be able to run on Master Node{reset}"
