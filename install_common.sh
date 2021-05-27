@@ -62,20 +62,6 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Configure the Docker daemon${reset}"
-echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo mkdir /etc/docker
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-  "exec-opts": ["native.cgroupdriver=systemd"],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m"
-  },
-  "storage-driver": "overlay2"
-}
-EOF
-echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Starting Docker service${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 systemctl start docker
