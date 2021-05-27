@@ -16,19 +16,19 @@ echo "--------------------------------------------------------------------------
 echo "${red}Remember to copy tokens for adding Worker Nodes${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Deploying Calico CNI{reset}"
+echo "${green}To start using your cluster, you need to run the following as a regular user:${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Deploying Weave CNI{reset}"
+echo "${green}Deploying Weave CNI${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Enable pods to be able to run on Master Node{reset}"
+echo "${green}Enable pods to be able to run on Master Node${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 kubectl taint nodes --all node-role.kubernetes.io/master-
 sleep 20s
