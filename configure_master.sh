@@ -19,13 +19,14 @@ echo "--------------------------------------------------------------------------
 echo "${green}Deploying Calico CNI{reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 mkdir -p $HOME/.kube
-cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-chown $(id -u):$(id -g) $HOME/.kube/config
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Deploying Calico CNI{reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Enable pods to be able to run on Master Node{reset}"
