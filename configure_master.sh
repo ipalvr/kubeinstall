@@ -9,7 +9,7 @@ echo "--------------------------------------------------------------------------
 sudo kubeadm config images pull
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Initiating Maste with subnet for CNIs 192.168.50.0/24. Can be customized by editing file${reset}"
+echo "${green}Initiating Maste with subnet for CNIs 10.244.0.0/16. Can be customized by editing file${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 sudo kubeadm init --pod-network-cidr 10.244.0.0/16
 echo "------------------------------------------------------------------------------------------------------------------------------------"
@@ -18,7 +18,7 @@ echo "--------------------------------------------------------------------------
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}To start using your cluster, you need to run the following as a regular user:${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-mkdir -p $HOME/.kube
+sudo mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 sleep 1s
