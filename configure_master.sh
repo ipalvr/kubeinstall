@@ -9,17 +9,18 @@ echo "--------------------------------------------------------------------------
 kubeadm config images pull
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-echo "${green}Initiating Maste with subnet for CNIs 10.244.0.0/16. Can be customized by editing file${reset}"
+echo "${green}Initiating Master with subnet for CNIs 10.244.0.0/16. Can be customized by editing file${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 kubeadm init --pod-network-cidr 10.244.0.0/16
+sleep 120s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${red}Remember to copy tokens for adding Worker Nodes${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Configure for regular user${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 mkdir -p $HOME/.kube
-cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-chown $(id -u):$(id -g) $HOME/.kube/config
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Deploying Weave CNI${reset}"
