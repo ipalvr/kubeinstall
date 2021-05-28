@@ -8,17 +8,17 @@ echo ""
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Updating Server${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo apt update && sudo apt upgrade -y
+apt update && sudo apt upgrade -y
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Disable swap${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo swapoff -a
+swapoff -a
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Set bridged packets to traverse iptables rules${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo modprobe br_netfilter
+modprobe br_netfilter
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 br_netfilter
 EOF
@@ -28,7 +28,7 @@ net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF
 sleep 1s
-sudo sysctl --system
+sysctl --system
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Installing Docker${reset}"
@@ -38,12 +38,12 @@ echo ""
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Unistall old versions of Docker${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo apt-get remove docker docker-engine docker.io containerd runc
+apt-get remove docker docker-engine docker.io containerd runc
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Set up the Docker repository${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo apt-get update
-sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y
+apt-get update
+apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Add Docker’s official GPG key${reset}"
@@ -58,8 +58,8 @@ echo \
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Install Docker Engine${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+apt-get update
+apt-get install docker-ce docker-ce-cli containerd.io -y
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Starting Docker service${reset}"
@@ -69,9 +69,9 @@ sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Restart Docker and enable on boot${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo systemctl enable docker
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+systemctl enable docker
+systemctl daemon-reload
+systemctl restart docker
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Checking Docker version${reset}"
@@ -85,7 +85,7 @@ else
   echo "${green}Docker deployment failed${reset}"
   echo "------------------------------------------------------------------------------------------------------------------------------------"
 fi
-sudo docker version
+docker version
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Installing Kubernetes${reset}"
@@ -95,13 +95,13 @@ echo ""
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Update the apt package index and install packages needed to use the Kubernetes${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo apt-get update
-sudo apt-get install -y apt-transport-https ca-certificates curl
+apt-get update
+apt-get install -y apt-transport-https ca-certificates curl
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Download the Google Cloud public signing key${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Add Kubernetes to the apt repository${reset}"
@@ -111,13 +111,13 @@ sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Update apt package index, install kubelet, kubeadm and kubectl, and pin their version${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo apt-get update
-sudo apt-get install -y kubelet kubeadm kubectl
-sudo apt-mark hold kubelet kubeadm kubectl
+apt-get update
+apt-get install -y kubelet kubeadm kubectl
+apt-mark hold kubelet kubeadm kubectl
 sleep 1s
 echo "------------------------------------------------------------------------------------------------------------------------------------"
 echo "${green}Starting Kubelet service${reset}"
 echo "------------------------------------------------------------------------------------------------------------------------------------"
-sudo systemctl enable kubelet
-sudo systemctl start kubelet
-sudo systemctl status kubelet
+systemctl enable kubelet
+systemctl start kubelet
+systemctl status kubelet
