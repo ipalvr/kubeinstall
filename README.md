@@ -24,11 +24,11 @@ Follow these steps to deploy Kubernetes:
 
 5. Run install_common.sh on Master node and all Worker Nodes. This will prepare your system for Kubernetes implementation
 
-	**./install_common.sh**
+	**sudo ./install_common.sh**
 
 6. **Only on Master Node!** Run configure_master.sh ONLY on Master node. This will configure Kubernetes Master Node with Control Plane and will deploye Calico CNI for Network Management. Please also take a note on command for connectivity from Worker Nodes. Visible above red colored statement "Remember to copy tokens for adding Worker Nodes". You can also modify subnet allocated to pods by Calico CNI. Default subnet is 192.168.50.0/24
 
-	**./configure_master.sh**
+	**sudo ./configure_master.sh**
 
 7. **Only on Worker Nodes!** Join all Worker Nodes to Master Node by executing command on Worker Node. Command was visible on Master Node after execution of ./configure_master.sh
 
